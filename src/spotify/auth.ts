@@ -29,7 +29,7 @@ const profileSchema = z.object({ id: z.string(), display_name: z.string().nullis
 
 const base64url = (bytes: Uint8Array) => Buffer.from(bytes).toString("base64url");
 
-const randomToken = () => base64url(crypto.getRandomValues(new Uint8Array(32)));
+export const randomToken = () => base64url(crypto.getRandomValues(new Uint8Array(32)));
 
 export async function pkceChallenge(verifier: string) {
   return base64url(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier))));
@@ -63,9 +63,9 @@ export async function startLogin(
   return { ok: true, url: url.toString(), oauth };
 }
 
-async function requestToken(params: Record<string, string>) {
+export async function requestToken(url: string, params: Record<string, string>) {
   try {
-    const res = await fetch(TOKEN_URL, {
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams(params),
@@ -77,7 +77,7 @@ async function requestToken(params: Record<string, string>) {
   }
 }
 
-const sameString = (a: string, b: string) =>
+export const sameString = (a: string, b: string) =>
   a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
 
 export async function completeLogin(
@@ -91,7 +91,7 @@ export async function completeLogin(
   const code = params.get("code");
   if (!code) return { ok: false, error: "authorize-failed" };
 
-  const exchanged = await requestToken({
+  const exchanged = await requestToken(TOKEN_URL, {
     grant_type: "authorization_code",
     code,
     redirect_uri: redirectUri(),
@@ -126,7 +126,7 @@ export async function getAccessToken(): Promise<AccessTokenResult> {
   const { clientId, user } = session;
   if (session.expiresAt - Date.now() > 60_000) return { ok: true, token: session.accessToken, clientId, user };
 
-  const refreshed = await requestToken({
+  const refreshed = await requestToken(TOKEN_URL, {
     grant_type: "refresh_token",
     refresh_token: session.refreshToken,
     client_id: clientId,
