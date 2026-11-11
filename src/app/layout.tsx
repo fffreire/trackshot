@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { PRODUCT } from "./brand";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "snap2spotify",
-  description: "Turn screenshots of music recommendations into Spotify playlists.",
+  title: PRODUCT.name,
+  description: "Screenshot any song or list. Get it in your playlist.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
