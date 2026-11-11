@@ -7,6 +7,6 @@ export default defineConfig({
     command: "npm run build && npm run start -- -H 127.0.0.1 -p 3000",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
-    env: { SPOTIFY_MOCK: "1", APP_URL: "http://127.0.0.1:3000", SESSION_SECRET: "e2e-secret-e2e-secret-e2e-secret-e2e!" },
+    env: { MOCK_PROVIDERS: "1", APP_URL: "http://127.0.0.1:3000", SESSION_SECRET: "e2e-secret-e2e-secret-e2e-secret-e2e!" },
   },
 });

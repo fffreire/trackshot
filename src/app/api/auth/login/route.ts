@@ -3,7 +3,7 @@ import { appUrl, startLogin } from "@/spotify/auth";
 import { oauthCookie, sessionCookie } from "@/spotify/session";
 
 export async function GET(request: NextRequest) {
-  if (process.env.SPOTIFY_MOCK === "1") {
+  if (process.env.MOCK_PROVIDERS === "1") {
     await sessionCookie.set({
       clientId: process.env.SPOTIFY_CLIENT_ID ?? "e2e-client",
       accessToken: "e2e-access-token",

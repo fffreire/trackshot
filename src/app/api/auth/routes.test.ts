@@ -28,7 +28,7 @@ beforeEach(() => {
   vi.stubEnv("SESSION_SECRET", "s".repeat(32));
   vi.stubEnv("APP_URL", "http://127.0.0.1:3000");
   vi.stubEnv("SPOTIFY_CLIENT_ID", "");
-  vi.stubEnv("SPOTIFY_MOCK", "");
+  vi.stubEnv("MOCK_PROVIDERS", "");
 });
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -57,7 +57,7 @@ describe("auth routes", () => {
   });
 
   it("mock mode sets the E2E session without calling Spotify", async () => {
-    vi.stubEnv("SPOTIFY_MOCK", "1");
+    vi.stubEnv("MOCK_PROVIDERS", "1");
     const res = await login(get("/api/auth/login"));
     expect(res.headers.get("location")).toBe("http://127.0.0.1:3000/");
     expect(await sessionCookie.get()).toMatchObject({ user: { id: "e2e-user", displayName: "E2E User" } });
