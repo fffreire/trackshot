@@ -40,7 +40,7 @@ The planned MCP server (Phase 2) is another entry point over the same core and p
 
 ## Why OCR runs in the browser
 
-Screenshots often contain other people's names, messages and faces. Reading them client-side means the server never receives the image, there's nothing to store or leak, and hosting stays cheap. The cost is a first-run download of the tesseract.js engine and English data from a CDN, and slower OCR on old phones.
+Screenshots often contain other people's names, messages and faces. Reading them client-side means the server never receives the image, there's nothing to store or leak, and hosting stays cheap. The cost is a first-run download (about 7 MB) of the tesseract.js engine and English data, served from the app's own `/ocr` folder rather than a CDN, and slower OCR on old phones.
 
 ## Why there's no database
 

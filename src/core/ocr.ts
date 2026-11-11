@@ -12,9 +12,12 @@ export function validateImage(file: File): ImageValidation {
 }
 
 // OCR runs entirely in the browser; the image is never uploaded.
-// By default tesseract.js downloads its WASM core and English language model from a CDN on first use.
+// The worker, WASM core and English model are served by this app from /ocr (see scripts/ocr-assets.mjs), not a CDN.
 export async function readImage(file: File, onProgress?: (pct: number) => void): Promise<string> {
   const worker = await createWorker("eng", undefined, {
+    workerPath: "/ocr/worker.min.js",
+    corePath: "/ocr",
+    langPath: "/ocr",
     logger: (message) => {
       if (message.status === "recognizing text") onProgress?.(Math.round(message.progress * 100));
     },

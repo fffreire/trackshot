@@ -43,3 +43,6 @@ next-env.d.ts
 /test-results
 /playwright-report
 !.env.example
+
+# OCR engine and language data, copied from node_modules by scripts/ocr-assets.mjs
+/public/ocr/

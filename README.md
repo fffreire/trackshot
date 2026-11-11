@@ -91,7 +91,7 @@ To connect real services, follow the setup guide for each one: [Spotify](docs/se
 
 ## Privacy
 
-- The screenshot is read with [tesseract.js](https://github.com/naptha/tesseract.js) in your browser and never uploaded. On first use tesseract.js downloads its engine and English language data from a public CDN.
+- The screenshot is read with [tesseract.js](https://github.com/naptha/tesseract.js) in your browser and never uploaded. The OCR engine and its English language data are served by this app too, not a CDN, so reading a screenshot contacts no third party.
 - Only song titles and artists go to the server, which passes them to the music service you search.
 - Tokens are kept only in encrypted, httpOnly cookies (AES-GCM). There is no database, no analytics and no server-side log of your songs.
 - Apple Music connects through Apple's MusicKit script, loaded from Apple's CDN.
