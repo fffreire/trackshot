@@ -35,7 +35,7 @@ export type TrackMatch =
 export interface Playlist {
   id: string;
   name: string;
-  trackCount: number;
+  trackCount?: number;
   imageUrl?: string;
   editable: boolean;
 }

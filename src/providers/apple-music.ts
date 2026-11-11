@@ -130,7 +130,7 @@ const toTrack = ({ id, attributes: a }: z.infer<typeof songSchema>): CatalogTrac
   uri: id,
   url: a.url,
   name: a.name,
-  artists: [a.artistName],
+  artists: [...new Set([a.artistName, ...a.artistName.split(/ & |, /)])],
   album: { name: a.albumName, releaseDate: a.releaseDate, imageUrl: artworkUrl(a.artwork) },
   durationMs: a.durationInMillis,
   isrc: a.isrc,
@@ -140,7 +140,6 @@ const toTrack = ({ id, attributes: a }: z.infer<typeof songSchema>): CatalogTrac
 const toPlaylist = ({ id, attributes: a }: z.infer<typeof playlistSchema>): Playlist => ({
   id,
   name: a.name,
-  trackCount: 0,
   imageUrl: artworkUrl(a.artwork),
   editable: a.canEdit,
 });

@@ -169,7 +169,6 @@ describe("Apple Music provider", () => {
     expect(await provider().createPlaylist("Pop punk")).toEqual({
       id: "p.new",
       name: "p.new",
-      trackCount: 0,
       editable: true,
     });
     expect(JSON.parse(String(calls()[0].init?.body))).toEqual({ attributes: { name: "Pop punk" } });
