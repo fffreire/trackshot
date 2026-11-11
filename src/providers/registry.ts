@@ -3,6 +3,7 @@ import { fakeSearch } from "@/core/fixtures/spotify-search";
 import { ProviderError, type Provider, type ProviderErrorKind, type ProviderId } from "@/core/types";
 import { getAccessToken } from "@/spotify/auth";
 import { sessionCookie } from "@/spotify/session";
+import { appleMusicConnector } from "./apple-music";
 import { createSpotifyProvider } from "./spotify";
 
 export type ProviderAccess =
@@ -130,7 +131,7 @@ export const connectors: Partial<Record<ProviderId, Connector>> =
         "apple-music": mockConnector("apple-music"),
         "youtube-music": mockConnector("youtube-music"),
       }
-    : { spotify: spotifyConnector };
+    : { spotify: spotifyConnector, "apple-music": appleMusicConnector };
 
 type ErrorKind = ProviderErrorKind | "not-connected" | "not-configured" | "invalid-request" | "duplicate-request";
 const httpStatus: Record<ErrorKind, number> = {

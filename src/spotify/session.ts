@@ -51,7 +51,7 @@ export async function decrypt<T>(token: string, name: string, schema: z.ZodType<
 
 const secure = () => !/^http:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?(\/|$)/.test(process.env.APP_URL ?? "");
 
-const cookie = <T>(name: string, schema: z.ZodType<T>, maxAge: number) => ({
+export const cookie = <T>(name: string, schema: z.ZodType<T>, maxAge: number) => ({
   get: async () => {
     const raw = (await cookies()).get(name)?.value;
     return raw ? decrypt(raw, name, schema) : null;
