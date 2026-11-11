@@ -14,8 +14,8 @@ const sessionSchema = z.object({
 export type YouTubeOAuthState = z.infer<typeof oauthSchema>;
 export type YouTubeSession = z.infer<typeof sessionSchema>;
 
-export const youtubeOAuthCookie = cookie("s2s_youtube_oauth", oauthSchema, 10 * 60);
-export const youtubeSessionCookie = cookie("s2s_youtube", sessionSchema, 30 * 24 * 60 * 60);
+export const youtubeOAuthCookie = cookie("ts_youtube_oauth", oauthSchema, 10 * 60);
+export const youtubeSessionCookie = cookie("ts_youtube", sessionSchema, 30 * 24 * 60 * 60);
 
 export type YouTubeAuthError =
   | "not-configured"

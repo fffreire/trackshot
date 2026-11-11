@@ -42,7 +42,7 @@ const errorSchema = z.object({
 });
 
 export const appleCookie = cookie(
-  "s2s_apple",
+  "ts_apple",
   z.object({ userToken: z.string(), storefront: z.string() }),
   180 * 24 * 60 * 60,
 );

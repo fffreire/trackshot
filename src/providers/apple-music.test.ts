@@ -241,7 +241,7 @@ describe("Apple Music connector and routes", () => {
     expect(calls()[0].init?.headers).not.toHaveProperty("Music-User-Token");
   });
 
-  it("connects with a user token, stores storefront in s2s_apple, and disconnects", async () => {
+  it("connects with a user token, stores storefront in ts_apple, and disconnects", async () => {
     expect(await appleMusicConnector.user()).toEqual({ ok: false, reason: "not-connected" });
     expect((await connect(request("POST", "https://evil.example", { userToken: "mut" }))).status).toBe(403);
     expect((await connect(request("POST", "http://127.0.0.1:3000", {}))).status).toBe(400);
@@ -249,7 +249,7 @@ describe("Apple Music connector and routes", () => {
     fetchMock.mockResolvedValueOnce(json({ data: [{ id: "br", type: "storefronts" }] }));
     expect((await connect(request("POST", "http://127.0.0.1:3000", { userToken: "mut" }))).status).toBe(204);
     expect(calls()[0].url).toBe("https://api.music.apple.com/v1/me/storefront");
-    expect(jar.get("s2s_apple")).not.toContain("mut");
+    expect(jar.get("ts_apple")).not.toContain("mut");
     expect(await appleCookie.get()).toEqual({ userToken: "mut", storefront: "br" });
     expect(await appleMusicConnector.status()).toEqual({ connected: true });
 
@@ -269,6 +269,6 @@ describe("Apple Music connector and routes", () => {
     fetchMock.mockResolvedValueOnce(json({ errors: [{ title: "Unauthorized" }] }, 401));
     const res = await connect(request("POST", "http://127.0.0.1:3000", { userToken: "bad" }));
     expect(res.status).toBe(401);
-    expect(jar.has("s2s_apple")).toBe(false);
+    expect(jar.has("ts_apple")).toBe(false);
   });
 });

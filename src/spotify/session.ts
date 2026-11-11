@@ -65,5 +65,5 @@ export const cookie = <T>(name: string, schema: z.ZodType<T>, maxAge: number) =>
   },
 });
 
-export const oauthCookie = cookie("s2s_oauth", oauthSchema, 10 * 60);
-export const sessionCookie = cookie("s2s_session", sessionSchema, 30 * 24 * 60 * 60);
+export const oauthCookie = cookie("ts_oauth", oauthSchema, 10 * 60);
+export const sessionCookie = cookie("ts_session", sessionSchema, 30 * 24 * 60 * 60);

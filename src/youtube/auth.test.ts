@@ -64,7 +64,7 @@ describe("login route", () => {
       code_challenge_method: "S256",
       code_challenge: await pkceChallenge(stored?.verifier ?? ""),
     });
-    expect(cookieOptions.get("s2s_youtube_oauth")).toEqual({
+    expect(cookieOptions.get("ts_youtube_oauth")).toEqual({
       httpOnly: true,
       sameSite: "lax",
       secure: false,
@@ -77,7 +77,7 @@ describe("login route", () => {
     vi.stubEnv("GOOGLE_CLIENT_SECRET", "");
     const res = await login();
     expect(res.headers.get("location")).toBe("http://127.0.0.1:3000/?auth_error=youtube-not-configured");
-    expect(jar.has("s2s_youtube_oauth")).toBe(false);
+    expect(jar.has("ts_youtube_oauth")).toBe(false);
   });
 });
 
@@ -116,8 +116,8 @@ describe("callback route", () => {
     fetchMock.mockResolvedValueOnce(tokens()).mockResolvedValueOnce(json({ kind: "youtube#channelListResponse" }));
     const res = await callback(get("/api/auth/youtube/callback?code=c&state=state-123"));
     expect(res.headers.get("location")).toBe("http://127.0.0.1:3000/?auth_error=youtube-no-channel");
-    expect(jar.has("s2s_youtube_oauth")).toBe(false);
-    expect(jar.has("s2s_youtube")).toBe(false);
+    expect(jar.has("ts_youtube_oauth")).toBe(false);
+    expect(jar.has("ts_youtube")).toBe(false);
   });
 
   it("stores the session and redirects home", async () => {
@@ -153,12 +153,12 @@ describe("getAccessToken", () => {
 
 describe("logout route", () => {
   it("requires a same-origin request", async () => {
-    jar.set("s2s_youtube", "x");
+    jar.set("ts_youtube", "x");
     const post = (origin: string) =>
       new Request("http://127.0.0.1:3000/api/auth/youtube/logout", { method: "POST", headers: { origin } });
     expect((await logout(post("https://evil.example"))).status).toBe(403);
-    expect(jar.has("s2s_youtube")).toBe(true);
+    expect(jar.has("ts_youtube")).toBe(true);
     expect((await logout(post("http://127.0.0.1:3000"))).status).toBe(204);
-    expect(jar.has("s2s_youtube")).toBe(false);
+    expect(jar.has("ts_youtube")).toBe(false);
   });
 });

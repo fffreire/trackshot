@@ -39,10 +39,10 @@ describe("auth routes", () => {
   it("login redirects to /?auth_error=no-client-id without any Client ID", async () => {
     const res = await login(get("/api/auth/login"));
     expect(res.headers.get("location")).toBe("http://127.0.0.1:3000/?auth_error=no-client-id");
-    expect(jar.has("s2s_oauth")).toBe(false);
+    expect(jar.has("ts_oauth")).toBe(false);
   });
 
-  it("login with a BYO Client ID sets s2s_oauth and redirects to Spotify", async () => {
+  it("login with a BYO Client ID sets ts_oauth and redirects to Spotify", async () => {
     const res = await login(get(`/api/auth/login?clientId=${BYO}`));
     expect(new URL(res.headers.get("location") ?? "").searchParams.get("client_id")).toBe(BYO);
     expect(await oauthCookie.get()).toMatchObject({ clientId: BYO });
@@ -50,10 +50,10 @@ describe("auth routes", () => {
 
   it("sets httpOnly lax cookies, secure unless APP_URL is loopback http", async () => {
     await login(get(`/api/auth/login?clientId=${BYO}`));
-    expect(cookieOptions.get("s2s_oauth")).toEqual({ httpOnly: true, sameSite: "lax", secure: false, path: "/", maxAge: 600 });
-    vi.stubEnv("APP_URL", "https://snap2spotify.example");
+    expect(cookieOptions.get("ts_oauth")).toEqual({ httpOnly: true, sameSite: "lax", secure: false, path: "/", maxAge: 600 });
+    vi.stubEnv("APP_URL", "https://trackshot.example");
     await login(get(`/api/auth/login?clientId=${BYO}`));
-    expect(cookieOptions.get("s2s_oauth")).toMatchObject({ secure: true });
+    expect(cookieOptions.get("ts_oauth")).toMatchObject({ secure: true });
   });
 
   it("mock mode sets the E2E session without calling Spotify", async () => {
@@ -63,7 +63,7 @@ describe("auth routes", () => {
     expect(await sessionCookie.get()).toMatchObject({ user: { id: "e2e-user", displayName: "E2E User" } });
   });
 
-  it("callback sends a non-allowlisted user to /?auth_error=not-allowlisted and clears s2s_oauth", async () => {
+  it("callback sends a non-allowlisted user to /?auth_error=not-allowlisted and clears ts_oauth", async () => {
     await oauthCookie.set({ state: "st", verifier: "v", clientId: BYO });
     vi.stubGlobal(
       "fetch",
@@ -74,8 +74,8 @@ describe("auth routes", () => {
     );
     const res = await callback(get("/api/auth/callback?code=c&state=st"));
     expect(res.headers.get("location")).toBe("http://127.0.0.1:3000/?auth_error=not-allowlisted");
-    expect(jar.has("s2s_oauth")).toBe(false);
-    expect(jar.has("s2s_session")).toBe(false);
+    expect(jar.has("ts_oauth")).toBe(false);
+    expect(jar.has("ts_session")).toBe(false);
   });
 
   it("session never returns tokens and reports BYO usage", async () => {
@@ -95,12 +95,12 @@ describe("auth routes", () => {
   });
 
   it("logout requires a same-origin request", async () => {
-    jar.set("s2s_session", "x");
+    jar.set("ts_session", "x");
     const post = (origin: string) =>
       new Request("http://127.0.0.1:3000/api/auth/logout", { method: "POST", headers: { origin } });
     expect((await logout(post("https://evil.example"))).status).toBe(403);
-    expect(jar.has("s2s_session")).toBe(true);
+    expect(jar.has("ts_session")).toBe(true);
     expect((await logout(post("http://127.0.0.1:3000"))).status).toBe(204);
-    expect(jar.has("s2s_session")).toBe(false);
+    expect(jar.has("ts_session")).toBe(false);
   });
 });
