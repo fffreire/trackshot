@@ -35,6 +35,8 @@ const clean = (line: string) =>
     .replace(/\s+/g, " ")
     .trim()
     .replace(/^[-*•·]\s+/, "")
+    // An emoji OCR couldn't read often ends a line as a stray symbol or two: "Paramore &", "Sum 41 \g".
+    .replace(/\s+(?![\p{L}\p{N}]+$)\S{1,2}$/u, "")
     .replace(/\s+(?:E|Explicit)$/, "");
 
 function split(body: string): [string, string?] {
@@ -77,8 +79,11 @@ function toEntries(lines: Line[]): Line[][] {
       if (NUMBER.test(line.body)) groups.push([{ ...line, body: line.body.replace(NUMBER, "") }]);
       else groups.at(-1)?.push(line);
     }
-    const separateLines = fewSeparators(groups.map(([head]) => head));
-    return groups.map((group) => group.slice(0, separateLines ? 2 : 1));
+    if (fewSeparators(groups.map(([head]) => head))) return groups.map((group) => group.slice(0, 2));
+    // In an inline list, unnumbered lines are a wrapped item, except after the last item, where they are a caption.
+    return groups.map((group, i) =>
+      i < groups.length - 1 ? [{ raw: group.map((line) => line.raw).join("\n"), body: group.map((line) => line.body).join(" ") }] : group.slice(0, 1),
+    );
   }
   if (fewSeparators(content)) return pairLines(lines);
   return content.filter((line) => split(line.body).length === 2).map((line) => [line]);

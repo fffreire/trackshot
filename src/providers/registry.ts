@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { fakeSearch } from "@/core/fixtures/spotify-search";
 import { ProviderError, type Provider, type ProviderErrorKind, type ProviderId } from "@/core/types";
@@ -117,11 +118,13 @@ function mockConnector(id: ProviderId): Connector {
       return trackIds.map((trackId) => ({ status: "added", trackId }));
     },
   };
+  // Spotify connects through the mock login route; E2E tests connect the others by setting a ts_mock_<id> cookie.
+  const connected = async () => (id === "spotify" ? !!(await sessionCookie.get()) : !!(await cookies()).get(`ts_mock_${id}`));
   return {
     configured: () => true,
-    user: async () => ((await sessionCookie.get()) ? { ok: true, provider } : { ok: false, reason: "not-connected" }),
+    user: async () => ((await connected()) ? { ok: true, provider } : { ok: false, reason: "not-connected" }),
     anonymous: async () => ({ ok: true, provider: searchOnly(provider) }),
-    status: sessionStatus,
+    status: async () => ((await connected()) ? { connected: true, user: { displayName: "E2E User" } } : { connected: false }),
   };
 }
 

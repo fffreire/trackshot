@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { parseTracks } from "./extract";
+import { acceptanceList } from "./fixtures/spotify-search";
 
 const pairs = (text: string) => parseTracks(text).map(({ title, artist }) => [title, artist]);
 const fixture = (name: string) => readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8");
@@ -24,6 +25,10 @@ describe("parseTracks", () => {
       Array.from({ length: 10 }, (_, i) => [`t${i + 1}`, i + 1]),
     );
     expect(tracks[1].originalText).toBe("2. Misery Business , Paramore 🎸");
+  });
+
+  it("parses what tesseract.js actually read from e2e/fixtures/poppunk-2007.png", () => {
+    expect(pairs(fixture("poppunk-2007-ocr.txt"))).toEqual(acceptanceList.map(({ title, artist }) => [title, artist]));
   });
 
   it("returns [] for empty or noise-only input", () => {
@@ -125,6 +130,21 @@ describe("parseTracks", () => {
     expect(pairs("1. Misery Business, Paramore\n2. Girlfriend, Avril Lavigne\nwhich one is your fav?")).toEqual([
       ["Misery Business", "Paramore"],
       ["Girlfriend", "Avril Lavigne"],
+    ]);
+  });
+
+  it("joins numbered inline items that wrap onto the next line", () => {
+    expect(pairs("5. Dear Maria Count Me In, All Time\nLow\n6. Shake It, Metro Station\nwhich one is your fav?")).toEqual([
+      ["Dear Maria Count Me In", "All Time Low"],
+      ["Shake It", "Metro Station"],
+    ]);
+  });
+
+  it("drops a stray symbol left by an emoji OCR couldn't read", () => {
+    expect(pairs("2. Misery Business, Paramore &\n10. Walking Disaster, Sum 41 \\g\n11. September - Earth, Wind & Fire")).toEqual([
+      ["Misery Business", "Paramore"],
+      ["Walking Disaster", "Sum 41"],
+      ["September", "Earth, Wind & Fire"],
     ]);
   });
 

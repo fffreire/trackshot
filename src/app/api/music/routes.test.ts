@@ -163,6 +163,8 @@ describe("MOCK_PROVIDERS", () => {
     const { connectors } = await import("@/providers/registry");
     expect(Object.keys(connectors)).toEqual(["spotify", "apple-music", "youtube-music"]);
     await connect();
+    expect(await connectors["apple-music"]!.user()).toEqual({ ok: false, reason: "not-connected" });
+    jar.set("ts_mock_apple-music", "1");
     const access = await connectors["apple-music"]!.user();
     if (!access.ok) throw new Error("expected access");
     const playlists = await access.provider.listPlaylists();
