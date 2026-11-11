@@ -267,7 +267,7 @@ export function ByoSpotify({ onLeave }: { onLeave: () => void }) {
           , with Web API enabled.
         </li>
         <li>
-          Add this redirect URI: <code className="rounded bg-bg px-1 py-0.5 text-fg break-all">http://127.0.0.1:3000/api/auth/callback</code>
+          Add this redirect URI: <code className="rounded bg-bg px-1 py-0.5 text-fg break-all">{`${location.origin}/api/auth/callback`}</code>
         </li>
         <li>Copy the app&apos;s Client ID and paste it here.</li>
       </ol>

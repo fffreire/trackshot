@@ -17,7 +17,7 @@ async function deriveKey() {
   if (!secret || secret.length < 32) throw new Error("SESSION_SECRET must be set to at least 32 characters");
   const material = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), "HKDF", false, ["deriveKey"]);
   return crypto.subtle.deriveKey(
-    { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(), info: new TextEncoder().encode("s2s-cookie-v1") },
+    { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(), info: new TextEncoder().encode("trackshot-cookie-v1") },
     material,
     { name: "AES-GCM", length: 256 },
     false,
