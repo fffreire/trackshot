@@ -144,11 +144,15 @@ describe("music routes", () => {
 
   it("reports provider status without tokens", async () => {
     await connect();
-    expect(await (await statusRoute()).json()).toEqual({
-      providers: [
-        { id: "spotify", configured: true, anonymousSearch: true, connected: true, user: { displayName: "Fer" } },
-      ],
+    const { providers } = await (await statusRoute()).json();
+    expect(providers).toContainEqual({
+      id: "spotify",
+      configured: true,
+      anonymousSearch: true,
+      connected: true,
+      user: { displayName: "Fer" },
     });
+    expect(JSON.stringify(providers)).not.toMatch(/token/i);
   });
 });
 
